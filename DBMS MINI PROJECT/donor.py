@@ -1,0 +1,29 @@
+import mysql.connector
+import streamlit as st
+import pandas as pd 
+import plotly.express as px
+import random as r
+import copy
+import time
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="swenik2112",
+    database="PES1UG20CS078_organ"
+)
+
+c = mydb.cursor()
+
+def view_donor_details():
+    c.execute('SELECT * FROM DONOR')
+    data=c.fetchall()
+    return data
+
+def add_donor_data(a,organ_donated, H_ID, reason_of_donation, date_of_Donation):
+    organid=r.randint(100000,999999)
+    c.execute('INSERT INTO donor (Donor_ID,organ_donated, H_ID, reason_of_donation, date_of_Donation) VALUES(%s,%s,%s,%s,%s)',(a,organ_donated, H_ID, reason_of_donation, date_of_Donation))
+    mydb.commit()
+    c.execute('CALL organ_availability (%s,%s,%s)' ,(organid,organ_donated,a))
+    mydb.commit()
+    return a
